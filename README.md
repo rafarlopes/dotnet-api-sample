@@ -25,11 +25,26 @@ dotnet dev-certs https
 dotnet dev-certs https --trust
 ```
 
+Packages added
+
+```sh
+# Swagger
+dotnet add src/Sample.API/Sample.API.csproj package Swashbuckle.AspNetCore
+# Serilog and extensions
+dotnet add src/Sample.API/Sample.API.csproj package Serilog
+dotnet add src/Sample.API/Sample.API.csproj package Serilog.Sinks.Console
+dotnet add src/Sample.API/Sample.API.csproj package Serilog.Sinks.File
+dotnet add src/Sample.API/Sample.API.csproj package Serilog.Enrichers.Environment
+dotnet add src/Sample.API/Sample.API.csproj package Serilog.Settings.Configuration
+dotnet add src/Sample.API/Sample.API.csproj package Serilog.Enrichers.Thread
+dotnet add src/Sample.API/Sample.API.csproj package Serilog.AspNetCore
+```
+
 
 ## Next Steps
 
-1. Add proper logging mechanism
-2. Add Swagger
+1. Add proper logging mechanism - DONE
+2. Add Swagger - DONE
 3. Add health checks
 4. Add metrics endpoint
 5. Dockerfile

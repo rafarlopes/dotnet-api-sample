@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Sample.API
 {
@@ -13,14 +11,49 @@ namespace Sample.API
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var configuration = GetConfiguration();
+
+            Log.Logger = CreateSerilogLogger(configuration);
+            
+            Log.Information("Configuring host (Sample.API)...");
+
+            var host = CreateHost(configuration, args);
+
+            host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHost CreateHost(IConfiguration configuration, string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    webBuilder
+                        .UseConfiguration(configuration)
+                        .UseSerilog()
+                        .UseStartup<Startup>();
+                })
+                .Build();
+        }
+
+        private static IConfiguration GetConfiguration()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional : false, reloadOnChange : true)
+                .AddEnvironmentVariables();
+
+            return builder.Build();
+        }
+
+        private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+        {
+            return new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.WithProperty("ApplicationContext", "Sample.API")
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
     }
 }

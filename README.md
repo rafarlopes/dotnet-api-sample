@@ -25,3 +25,12 @@ dotnet dev-certs https
 dotnet dev-certs https --trust
 ```
 
+
+## Next Steps
+
+1. Add proper logging mechanism
+2. Add Swagger
+3. Add health checks
+4. Add metrics endpoint
+5. Dockerfile
+6. TBD
